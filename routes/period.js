@@ -1,6 +1,6 @@
 // Route
 router.get('/period/:periodDates', (req, res) => {
-  Artists.find({ artist: req.params.artistName })
+  Artist.find({ artist: req.params.artistName })
     .then(result => {
       res.json({songs: result.toArray()})
     }).catch(err => {
