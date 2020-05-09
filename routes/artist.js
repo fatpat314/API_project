@@ -10,8 +10,9 @@ module.exports = (router) => {
         })
     })
 
-    router.get('/artist/', (req, res) => {
-      Artist.find({})
+    router.get('/artist', (req, res) => {
+        console.log("HELP")
+      Artist.find({artists: req.params.artistName})
         .then(result => {
           res.json({artist: result})
         }).catch(err => {

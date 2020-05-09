@@ -8,4 +8,4 @@ const KeySchema = new Schema({
     period: {type: String, required: false}
 });
 
-module.exports = mongoose.model("Songs", SongsSchema);
+module.exports = mongoose.model("Key", KeySchema);
