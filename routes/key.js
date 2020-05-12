@@ -1,10 +1,10 @@
 // Route
 const Key = require("../models/key")
 module.exports = (router) => {
-    router.get('/key', (req, res) => {
-      Key.find({ song: req.params.artistName })
+    router.get('/:keyName', (req, res) => {
+      Key.find({ name: req.params.keyName })
         .then(result => {
-          res.json({songs: result})
+          res.json({name: result})
         }).catch(err => {
           throw err.message
         })

@@ -6,42 +6,38 @@ const jwt = require('jsonwebtoken');
 const connUri = process.env.MONGO_LOCAL_CONN_URL;
 
 module.exports = {
-  add: (req, res) => {
-    mongoose.connect(connUri, { useNewUrlParser : true }, (err) => {
+  signup: (req, res) => {
+    // mongoose.connect(connUri, { useNewUrlParser : true }, (err) => {
       let result = {};
       let status = 201;
-      if (!err) {
+
         const { name, password } = req.body;
         const user = new User({ name, password }); // document = instance of a model
         // TODO: We can hash the password here before we insert instead of in the model
         user.save((err, user) => {
+            var token = jwt.sign({ _id: user._id }, process.env.SECRET, {expiresIn: "60 days"});
           if (!err) {
-            result.status = status;
+            // result.status = status;
             result.result = user;
           } else {
             status = 500;
             result.status = status;
             result.error = err;
+            console.log(err)
           }
           res.status(status).send(result);
         });
-      } else {
-        status = 500;
-        result.status = status;
-        result.error = err;
-        res.status(status).send(result);
-      }
-    });
+
   },
 
 
 login: (req, res) => {
     const { name, password } = req.body;
 
-    mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
+    // mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
       let result = {};
       let status = 200;
-      if(!err) {
+      // if(!err) {
         User.findOne({name}, (err, user) => {
           if (!err && user) {
             // We could compare passwords in our model instead of below as well
@@ -74,23 +70,20 @@ login: (req, res) => {
             status = 404;
             result.status = status;
             result.error = err;
+            console.log(err)
             res.status(status).send(result);
           }
         });
-      } else {
-        status = 500;
-        result.status = status;
-        result.error = err;
-        res.status(status).send(result);
-      }
-    });
+
+
 },
 
   getAll: (req, res) => {
-    mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
+    // mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
+
       let result = {};
       let status = 200;
-      if (!err) {
+
         const payload = req.decoded;
         // TODO: Log the payload here to verify that it's the same payload
         //  we used when we created the token
@@ -112,14 +105,10 @@ login: (req, res) => {
           status = 401;
           result.status = status;
           result.error = `Authentication error`;
+          // console.log(err)
           res.status(status).send(result);
         }
-      } else {
-        status = 500;
-        result.status = status;
-        result.error = err;
-        res.status(status).send(result);
-      }
-    });
+
+
   }
 }

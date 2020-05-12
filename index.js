@@ -11,15 +11,17 @@ const environment = process.env.NODE_ENV; // development
 const stage = require('./config')[environment];
 
 const routes = require('./routes/index.js');
-routes(router)
 
-// app.use('/api/v1', routes(router));
+
+
 
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+app.use('/', routes(router));
 
 app.use(router);
 

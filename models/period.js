@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const PeriodSchema = new Schema({
     dates: { type: String, required: true },
-    artists: [{ type: Schema.Types.ObjectId, ref:'Artists'}]
+    artists: [{ type: String, ref:'Artists'}]
 
 });
 

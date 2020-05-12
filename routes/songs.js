@@ -25,9 +25,9 @@
 const Songs = require("../models/songs")
 module.exports = (router) => {
     router.get('/songs/:songName', (req, res) => {
-      Songs.find({ songs: req.params.songName })
+      Songs.find({ name: req.params.songName })
         .then(result => {
-          res.json({songs: result})
+          res.json({name: result})
         }).catch(err => {
           throw err.message
         })

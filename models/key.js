@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const KeySchema = new Schema({
     name: { type: String, required: true },
-    song: {type: Schema.Types.ObjectId, ref:'Songs'},
+    songs: {type: String, required: true},
     key: { type: String, required: false},
     period: {type: String, required: false}
 });

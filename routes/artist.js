@@ -1,8 +1,9 @@
 // Route
 const Artist = require("../models/artist")
+const Songs = require("../models/songs")
 module.exports = (router) => {
     router.get('/artist/:artistName', (req, res) => {
-      Songs.find({ artist: req.params.artistName })
+      Artist.find({ name: req.params.artistName })
         .then(result => {
           res.json({songs: result})
         }).catch(err => {
