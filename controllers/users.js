@@ -15,9 +15,9 @@ module.exports = {
         const user = new User({ name, password }); // document = instance of a model
         // TODO: We can hash the password here before we insert instead of in the model
         user.save((err, user) => {
-            var token = jwt.sign({ _id: user._id }, process.env.SECRET, {expiresIn: "60 days"});
           if (!err) {
             // result.status = status;
+            var token = jwt.sign({ _id: user._id }, process.env.SECRET, {expiresIn: "60 days"});
             result.result = user;
           } else {
             status = 500;
@@ -47,7 +47,7 @@ login: (req, res) => {
                 // Create a token
                 const payload = { user: user.name };
                 const options = { expiresIn: '2d', issuer: 'https://scotch.io' };
-                const secret = process.env.JWT_SECRET;
+                const secret = process.env.SECRET;
                 const token = jwt.sign(payload, secret, options);
 
                 // console.log('TOKEN', token);

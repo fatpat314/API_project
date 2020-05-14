@@ -9,9 +9,5 @@ module.exports = (router) => {
           throw err.message
         })
     })
-    // router.post('/period', (req, res))
+
 };
-
-
-// Figure out how to also get other data out of the artist
-// and show multiple artists of a single period.

@@ -1,7 +1,7 @@
 # Real Book API
 
 Description:
-This API allows for the user to search for and contribute versions of "Real Book" jazz pieces for the world to use.
+This API allows for the user to search for and contribute information about Jazz standards and the artists who made them from the 'Real Book'
 
 Installation:
 N/A
@@ -13,22 +13,39 @@ Returns artist
 
 /artist
 
-returns a list of songs by that artist
-example output: /artist/duke_ellington/a_train
+returns a list of all of the artists and their information
+example output: /artist
 ```
 [
     {
         "artist": "Duke Ellington",
         "songs": "Take the A train"
     }
+
+    {
+        "artist": "John Coltrane",
+        "songs": "Equinox"
+    }
 ]
 ```
-/artist/{artist}/pieces
 
-songs/key
+Return a specific artist
+/artist/:artistName
+example output: /artist/Charles Mingus
+```
+[
+    {
+        "artist": "Charles Mingus",
+        "songs": "Moanin"...
+        "period": "1950"....
+    }
+]
 
-returns a list of pieces in a key
-example output: /songs/key-G/all_blues
+```
+/songs/{key}
+
+returns a list of pieces in a given key
+example output: /key/G minor
 ```
 [
     {
@@ -37,7 +54,7 @@ example output: /songs/key-G/all_blues
     }
 ]
 ```
-/songs/{key}
+
 
 
 

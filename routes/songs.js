@@ -42,6 +42,14 @@ module.exports = (router) => {
                 throw err.message
             })
     })
+    router.post("/song/new", (req, res) => {
+        console.log(req.body);
+        var song = new Songs(req.body);
+            res.json({ song: req.body })
+            song.save()
+                .then(song => {
+                return Songs
+            })
+
+        })
 };
-// Also figure out how to specifically show
-// the individual songs data, like dates, key, that kinda stuff.
