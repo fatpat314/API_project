@@ -1,114 +1,64 @@
-const mongoose = require('mongoose');
-const User = require('../models/users');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+const User = require('../models/users.js')
+const checkAuth = require('../utils/checkUser')
 
-const connUri = process.env.MONGO_LOCAL_CONN_URL;
-
-module.exports = {
-  signup: (req, res) => {
-    // mongoose.connect(connUri, { useNewUrlParser : true }, (err) => {
-      let result = {};
-      let status = 201;
-
-        const { name, password } = req.body;
-        const user = new User({ name, password }); // document = instance of a model
-        // TODO: We can hash the password here before we insert instead of in the model
-        user.save((err, user) => {
-          if (!err) {
-            // result.status = status;
-            var token = jwt.sign({ _id: user._id }, process.env.SECRET, {expiresIn: "60 days"});
-            result.result = user;
-          } else {
-            status = 500;
-            result.status = status;
-            result.error = err;
-            console.log(err)
-          }
-          res.status(status).send(result);
-        });
-
-  },
+module.exports = (app) => {
+    // Sign up
+    app.post("/signup", (req, res) => {
 
 
-login: (req, res) => {
-    const { name, password } = req.body;
+        console.log(req.body)
+        const user = new User(req.body);
 
-    // mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
-      let result = {};
-      let status = 200;
-      // if(!err) {
-        User.findOne({name}, (err, user) => {
-          if (!err && user) {
-            // We could compare passwords in our model instead of below as well
-            bcrypt.compare(password, user.password).then(match => {
-              if (match) {
-                status = 200;
-                // Create a token
-                const payload = { user: user.name };
-                const options = { expiresIn: '2d', issuer: 'https://scotch.io' };
-                const secret = process.env.SECRET;
-                const token = jwt.sign(payload, secret, options);
+        user
+            .save()
 
-                // console.log('TOKEN', token);
-                result.token = token;
-                result.status = status;
-                result.result = user;
-              } else {
-                status = 401;
-                result.status = status;
-                result.error = `Authentication error`;
-              }
-              res.status(status).send(result);
-            }).catch(err => {
-              status = 500;
-              result.status = status;
-              result.error = err;
-              res.status(status).send(result);
-            });
-          } else {
-            status = 404;
-            result.status = status;
-            result.error = err;
-            console.log(err)
-            res.status(status).send(result);
-          }
-        });
+            .then(user => {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                console.log(user)
+                const token = jwt.sign({_id: user._id}, process.env.SECRET, {expiresIn: "60 days"})
+                res.cookie('pToken', token, { maxAge: 900000, httpOnly: true });
+                return res.status(200).send({status: 200, message:"Success: Signed up", token:token})
+                })
+                .catch(err => {
+                    return res.send({status: 401, message:"Error: User name taken", err: err['errmsg']});
+                })
+            })
+    // Login
+    app.post('/login', (req, res) => {
+        const username = req.body.username;
+        const password = req.body.password;
+        console.log()
 
-
-},
-
-  getAll: (req, res) => {
-    // mongoose.connect(connUri, { useNewUrlParser: true }, (err) => {
-
-      let result = {};
-      let status = 200;
-
-        const payload = req.decoded;
-        // TODO: Log the payload here to verify that it's the same payload
-        //  we used when we created the token
-        // console.log('PAYLOAD', payload);
-        if (payload && payload.user === 'admin') {
-          User.find({}, (err, users) => {
-            if (!err) {
-              result.status = status;
-              result.error = err;
-              result.result = users;
-            } else {
-              status = 500;
-              result.status = status;
-              result.error = err;
+        User.findOne({ username}, "username password")
+        .then(user => {
+            if (!user) {
+                //user not found
+                return res.status(401).json({ status: 401, massage: "error: Wrong Username or Password" });
             }
-            res.status(status).send(result);
-          });
-        } else {
-          status = 401;
-          result.status = status;
-          result.error = `Authentication error`;
-          // console.log(err)
-          res.status(status).send(result);
-        }
-
-
-  }
+            // check the password
+            user.comparePassword(password, (err, isMatch) => {
+                if (!isMatch) {
+                    // password does not match
+                    return res.status(401).json({ status: 402, message: "Error: Wrong Username or Password" });
+                }
+            // Create a token
+            const token = jwt.sign({_id: user._id, username: user.username }, process.env.SECRET,{
+                expiresIn: "60 days"
+            });
+            //  Set a cookie and redirect to root
+                res.cookie("ptoken", token, {maxAge: 900000, httpOnly: true });
+                return res.status(200).json({status:200, message: "Success: Logged in", token: token})
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(401).json({status: 403, message: "Failed: Unauthorized login"})
+        });
+    });
+    // LOGOUT
+    app.get('/logout', (req, res) => {
+        res.clearCookie('pToken');
+        return res.send({status: 200, message:"Success: Logged out"});
+    })
 }

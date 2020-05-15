@@ -3,8 +3,11 @@
 Description:
 This API allows for the user to search for and contribute information about Jazz standards and the artists who made them from the 'Real Book'
 
-Installation:
-N/A
+Install with:
+npm install
+
+Run server with:
+npm start
 
 
 Endpoints:
@@ -55,22 +58,6 @@ example output: /key/G minor
 ]
 ```
 
-
-
-
-/period
-returns a list of artists of a period of time.
-example output: /period/1950
-
-```
-[
-    {
-        "period": "1950"
-        "artists": "Duke_Ellington", "...", "..."
-    }
-]
-```
-/period/1950
 
 
 /songs/{song_name}
